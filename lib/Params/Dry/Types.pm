@@ -8,32 +8,30 @@
 #* Build in types for Params::Dry
 #*
 package Params::Dry::Types;
-
+{
     use strict;
     use warnings;
 
-    # --- version ---
-    our $VERSION = 1.00;
+# --- version ---
+    our $VERSION = 1.07;
 
-    #=------------------------------------------------------------------------ { use, constants }
+#=------------------------------------------------------------------------ { use, constants }
 
     use Scalar::Util 'blessed';
 
-    use constant PASS     =>    1; # pass test
-    use constant FAIL     =>    0; # test fail
+    use constant PASS => 1;    # pass test
+    use constant FAIL => 0;    # test fail
 
-    #=------------------------------------------------------------------------ { export }
+#=------------------------------------------------------------------------ { export }
 
-    use Exporter;	# to export _ rq and opt
+    use Exporter;              # to export _ rq and opt
     our @ISA = qw(Exporter);
 
     our @EXPORT_OK = qw(PASS FAIL);
 
-    our %EXPORT_TAGS = (
-        const => [ qw(PASS FAIL) ],
-    );
+    our %EXPORT_TAGS = ( const => [qw(PASS FAIL)], );
 
-    #=------------------------------------------------------------------------ { module public functions }
+#=------------------------------------------------------------------------ { module public functions }
 
     #=---------
     #  String
@@ -41,10 +39,10 @@ package Params::Dry::Types;
     #* string type check (parameter sets max length)
     #* RETURN: PASS if test pass otherwise FAIL
     sub String {
-        ref($_[0]) and return FAIL;
+        ref( $_[0] ) and return FAIL;
         $_[1] and length $_[0] > $_[1] and return FAIL;
         PASS;
-    }
+    } #+ end of: sub String
 
     #=------
     #  Int
@@ -52,10 +50,10 @@ package Params::Dry::Types;
     #* int type check Int[3] - no more than 999
     #* RETURN: PASS if test pass otherwise FAIL
     sub Int {
-        (ref($_[0]) or $_[0] !~ /^[+\-]?(\d+)$/) and return FAIL;
+        ( ref( $_[0] ) or $_[0] !~ /^[+\-]?(\d+)$/ ) and return FAIL;
         $_[1] and $1 and length $1 > $_[1] and return FAIL;
         PASS;
-    }
+    } #+ end of: sub Int
 
     #=--------
     #  Float
@@ -63,10 +61,10 @@ package Params::Dry::Types;
     #* float type check
     #* RETURN: PASS if test pass otherwise FAIL
     sub Float {
-        (ref($_[0]) or $_[0] !~ /^[+\-]?(\d+(?:\.\d+)?)$/) and return FAIL;
+        ( ref( $_[0] ) or $_[0] !~ /^[+\-]?(\d+(?:\.\d+)?)$/ ) and return FAIL;
         $_[1] and $1 and length $1 > $_[1] and return FAIL;
         PASS;
-    }
+    } #+ end of: sub Float
 
     #=-------
     #  Bool
@@ -74,9 +72,9 @@ package Params::Dry::Types;
     #* Bool type check
     #* RETURN: PASS if test pass otherwise FAIL
     sub Bool {
-        return PASS if !ref($_[0]) and ("$_[0]" eq '0' or "$_[0]" eq 1);
+        return PASS if !ref( $_[0] ) and ( "$_[0]" eq '0' or "$_[0]" eq 1 );
         FAIL;
-    }
+    } #+ end of: sub Bool
 
     #=---------
     #  Object
@@ -84,11 +82,11 @@ package Params::Dry::Types;
     #* Object type check, Object - just object, or Object(APos::core) check if is APos::core type
     #* RETURN: PASS if test pass otherwise FAIL
     sub Object {
-        my $class = blessed($_[0]);
-        return FAIL if !$class; # not an object    
-        return FAIL if $_[1] and ($_[1] ne $class);
+        my $class = blessed( $_[0] );
+        return FAIL if !$class;                         # not an object
+        return FAIL if $_[1] and ( $_[1] ne $class );
         PASS;
-    }
+    } #+ end of: sub Object
 
     #=------
     #  Ref
@@ -96,12 +94,11 @@ package Params::Dry::Types;
     #* ref type check
     #* RETURN: PASS if test pass otherwise FAIL
     sub Ref {
-        my $ref = ref($_[0]) or return FAIL;
-        
+        my $ref = ref( $_[0] ) or return FAIL;
+
         return FAIL if $_[1] and $ref ne $_[1];
         PASS;
-    }
-
+    } #+ end of: sub Ref
 
     #=---------
     #  Scalar
@@ -109,8 +106,8 @@ package Params::Dry::Types;
     #* scalar type check
     #* RETURN: PASS if test pass otherwise FAIL
     sub Scalar {
-        Ref($_[0],'SCALAR');
-    }
+        Ref( $_[0], 'SCALAR' );
+    } #+ end of: sub Scalar
 
     #=--------
     #  Array
@@ -118,8 +115,8 @@ package Params::Dry::Types;
     #* array type check
     #* RETURN: PASS if test pass otherwise FAIL
     sub Array {
-        Ref($_[0],'ARRAY');
-    }
+        Ref( $_[0], 'ARRAY' );
+    } #+ end of: sub Array
 
     #=-------
     #  Hash
@@ -127,8 +124,8 @@ package Params::Dry::Types;
     #* array type check
     #* RETURN: PASS if test pass otherwise FAIL
     sub Hash {
-        Ref($_[0],'HASH');
-    }
+        Ref( $_[0], 'HASH' );
+    } #+ end of: sub Hash
 
     #=-------
     #  Code
@@ -136,10 +133,11 @@ package Params::Dry::Types;
     #* array type check
     #* RETURN: PASS if test pass otherwise FAIL
     sub Code {
-        Ref($_[0],'CODE');
-    }
+        Ref( $_[0], 'CODE' );
+    } #+ end of: sub Code
 
-0115&&0x4d;
+};
+0115 && 0x4d;
 
 #+ End of Params::Dry::Types
 __END__
@@ -175,13 +173,13 @@ version 1.00
 
 =item * B<Ref> - any reference, Optional parameter defines type of the reference
 
-=item * B<Scalar> - short cut of Ref[Scalar] 
+=item * B<Scalar> - short cut of Ref[Scalar]
 
-=item * B<Array> - short cut of Ref[Array] 
+=item * B<Array> - short cut of Ref[Array]
 
-=item * B<Hash> - short cut of Ref[Hash] 
+=item * B<Hash> - short cut of Ref[Hash]
 
-=item * B<Code> - short cut of Ref[Code] 
+=item * B<Code> - short cut of Ref[Code]
 
 =back
 
@@ -210,7 +208,7 @@ Example.
         my $self = __@_;
 
         my $p_super_name = rq 'super_name', 'Super::String'; # that's all folks!
-        
+
         ...
     }
 

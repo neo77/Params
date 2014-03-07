@@ -1,5 +1,9 @@
 Revision history for Params::Dry
 
+1.07 2014-03-07    
+ - kwalitee: consistent version
+ - kwalitee: LICENSE file META.yml
+ - use parent instead of directly use of @ISA and Exporter
 1.06 2013-07-31    
  - fix comments
  - fixing Changes RT#87453

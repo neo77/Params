@@ -9,7 +9,7 @@ configure_requires:
   ExtUtils::MakeMaker: 0
 dynamic_config: 0
 generated_by: 'ExtUtils::MakeMaker version 6.64, CPAN::Meta::Converter version 2.130880'
-license: unknown
+license: artistic_2
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
   version: 1.4
@@ -18,9 +18,23 @@ no_index:
   directory:
     - t
     - inc
+provides:
+    Params::Dry:
+        file: lib/Params/Dry.pm
+        version: 1.07
+    Params::Dry::Types:
+        file: lib/Params/Dry/Types.pm
+        version: 1.07
 requires:
   Carp: 0
   Exporter: 0
   Scalar::Util: 0
   perl: 5.01
-version: 1
+version: 1.07
+resources: 
+    license: http://opensource.org/licenses/artistic-license-2.0.php
+    repository: https://github.com/neo77/Params-Dry
+distribution_type: module
+keywords:
+    - params
+    - parameters

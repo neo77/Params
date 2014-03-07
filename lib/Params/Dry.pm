@@ -11,7 +11,7 @@
 #*
 #* Yes, DRY principle in its pure form!
 #*
-#* So all what you can find in this module. 
+#* So all what you can find in this module.
 #*
 #* That's all. Easy to use. Easy to manage. Easy to understand.
 #*
@@ -23,19 +23,20 @@
 #*
 
 package Params::Dry;
-    
+{
+
     use strict;
     use warnings;
 
     use 5.10.0;
 
-    # --- version ---
-    our $VERSION = 1.06;
+# --- version ---
+    our $VERSION = 1.07;
 
-    #=------------------------------------------------------------------------ { use, constants }
+#=------------------------------------------------------------------------ { use, constants }
 
-    use Carp;                   # confess
-    use Params::Dry::Types;     # to mark that will reserving this namespace (build in types)
+    use Carp;                  # confess
+    use Params::Dry::Types;    # to mark that will reserving this namespace (build in types)
 
     use constant DEFAULT_TYPE => 1;        # default check (for param_op)
     use constant TRUE         => 1;        # true
@@ -43,24 +44,22 @@ package Params::Dry;
     use constant OK           => TRUE;     # true
     use constant NO           => FALSE;    # false
 
-    our $Debug      = FALSE;               # use Debug mode or not
+    our $Debug = FALSE;                    # use Debug mode or not
 
-    #=------------------------------------------------------------------------ { export }
+#=------------------------------------------------------------------------ { export }
 
-    # import strict params
+# import strict params
 
-    use Exporter;    # to export _ rq and opt
-    our @ISA = qw(Exporter);
+    use parent 'Exporter';
 
     our @EXPORT_OK = qw(__ rq op typedef no_more DEFAULT_TYPE param_rq param_op);
 
     our %EXPORT_TAGS = (
-        short => [qw(__ rq op typedef no_more DEFAULT_TYPE)],
-        long  => [qw(__ param_rq param_op typedef no_more DEFAULT_TYPE)]
+                         short => [qw(__ rq op typedef no_more DEFAULT_TYPE)],
+                         long  => [qw(__ param_rq param_op typedef no_more DEFAULT_TYPE)]
     );
 
-
-    #=------------------------------------------------------------------------ { module private functions }
+#=------------------------------------------------------------------------ { module private functions }
 
     #=---------
     #  _error
@@ -68,8 +67,8 @@ package Params::Dry;
     #* printing error message
     # RETURN: dies (in case of Debug is making confess)
     sub _error {
-        ($Params::Dry::Debug) ? confess(@_) : die(@_);
-    }
+        ( $Params::Dry::Debug ) ? confess( @_ ) : die( @_ );
+    } #+ end of: sub _error
 
     #=-----------------------
     #  __get_effective_type
@@ -78,9 +77,9 @@ package Params::Dry;
     #* so for super_client final type will be String[20])
     #* RETURN: final type string
     sub __get_effective_type {
-        my $param_type = $Params::Dry::Internal::typedefs{"$_[0]"};
-        $param_type ? __get_effective_type($param_type) : $_[0];
-    }
+        my $param_type = $Params::Dry::Internal::typedefs{ "$_[0]" };
+        $param_type ? __get_effective_type( $param_type ) : $_[0];
+    } #+ end of: sub __get_effective_type
 
     #=--------------------
     #  __check_parameter
@@ -91,51 +90,51 @@ package Params::Dry;
         my ( $p_name, $p_type, $p_default, $p_is_required ) = @_;
 
         # --- check internal syntax ---
-        _error("Name of the parameter has to be defined") unless $p_name;
+        _error( "Name of the parameter has to be defined" ) unless $p_name;
 
         # --- detect type (set explicite or get it from name?)
-        my $counted_param_type = ( !defined($p_type) or ( $p_type =~ /^\d+$/ and $p_type == DEFAULT_TYPE ) ) ? $p_name : $p_type;
+        my $counted_param_type = ( !defined( $p_type ) or ( $p_type =~ /^\d+$/ and $p_type == DEFAULT_TYPE ) ) ? $p_name : $p_type;
 
         # --- check effective parameter definition
-        my $effective_param_type = __get_effective_type($counted_param_type);
+        my $effective_param_type = __get_effective_type( $counted_param_type );
 
         # --- check effective parameter definition for used name (if exists) and if user is not trying to replace name-type with new one (to keep clean naminigs)
-        if ( $Params::Dry::Internal::typedefs{"$p_name"} ) {
-            my $effective_name_type = __get_effective_type($p_name);
-            _error("This variable $p_name is used before in code as $p_name type ($effective_name_type) and here you are trying to redefine it to $counted_param_type ($effective_param_type)")
-              if $effective_name_type ne $effective_param_type;
-        }
+        if ( $Params::Dry::Internal::typedefs{ "$p_name" } ) {
+            my $effective_name_type = __get_effective_type( $p_name );
+            _error( "This variable $p_name is used before in code as $p_name type ($effective_name_type) and here you are trying to redefine it to $counted_param_type ($effective_param_type)" )
+                if $effective_name_type ne $effective_param_type;
+        } #+ end of: if ( $Params::Dry::Internal::typedefs...)
 
         # --- get package, function and parameters
         my ( $type_package, $type_function, $parameters ) = $effective_param_type =~ /^(?:(.+)::)?([^\[]+)(?:\[(.+?)\])?/;
 
-        my $final_type_package = ($type_package) ? 'Params::Dry::Types::' . $type_package : 'Params::Dry::Types';
+        my $final_type_package = ( $type_package ) ? 'Params::Dry::Types::' . $type_package : 'Params::Dry::Types';
 
         my @type_parameters = split /\s*,\s*/, $parameters // '';
 
         # --- set default type unless type ---
-        _error("Type $counted_param_type ($effective_param_type) is not defined") unless $final_type_package->can("$type_function");
+        _error( "Type $counted_param_type ($effective_param_type) is not defined" ) unless $final_type_package->can( "$type_function" );
 
         # --- getting final parameter value ---
-        my $param_value = ( $Params::Dry::Internal::current_params->{"$p_name"} ) // $p_default // undef;
+        my $param_value = ( $Params::Dry::Internal::current_params->{ "$p_name" } ) // $p_default // undef;
 
         my $check_function = $final_type_package . '::' . $type_function;
 
         # --- required / optional
-        if ( !defined($param_value) ) {
-            ($p_is_required) ? _error("Parameter '$p_name' is required)") : return;
-        }
+        if ( !defined( $param_value ) ) {
+            ( $p_is_required ) ? _error( "Parameter '$p_name' is required)" ) : return;
+        } #+ end of: if ( !defined( $param_value...))
 
         # --- check if is valid
         {
             no strict 'refs';
-            &$check_function( $param_value, @type_parameters ) or _error("Parameter '$p_name' is not '$counted_param_type' type (effective: $effective_param_type)");
+            &$check_function( $param_value, @type_parameters ) or _error( "Parameter '$p_name' is not '$counted_param_type' type (effective: $effective_param_type)" );
         }
 
         $param_value;
-    }
+    } #+ end of: sub __check_parameter
 
-    #=------------------------------------------------------------------------ { module public functions }
+#=------------------------------------------------------------------------ { module public functions }
 
     #=-----
     #  rq
@@ -146,7 +145,7 @@ package Params::Dry;
         my ( $p_name, $p_type, $p_default ) = @_;
 
         return __check_parameter( $p_name, $p_type, $p_default, TRUE );
-    }
+    } #+ end of: sub rq($;$$)
 
     #=-----
     #  op
@@ -157,7 +156,7 @@ package Params::Dry;
         my ( $p_name, $p_type, $p_default ) = @_;
 
         return __check_parameter( $p_name, $p_type, $p_default, FALSE );
-    }
+    } #+ end of: sub op($;$$)
 
     #=---------
     # typedef
@@ -167,17 +166,17 @@ package Params::Dry;
     sub typedef($$) {
         my ( $p_name, $p_definition ) = @_;
 
-        if ( exists $Params::Dry::Internal::typedefs{$p_name} ) {
-            _error("Error parameter $p_name already defined as $p_definition")
-              if __get_effective_type( $Params::Dry::Internal::typedefs{$p_name} ) ne __get_effective_type($p_definition);
-        }
+        if ( exists $Params::Dry::Internal::typedefs{ $p_name } ) {
+            _error( "Error parameter $p_name already defined as $p_definition" )
+                if __get_effective_type( $Params::Dry::Internal::typedefs{ $p_name } ) ne __get_effective_type( $p_definition );
+        } #+ end of: if ( exists $Params::Dry::Internal::typedefs...)
 
         # --- just add new definition
-        $Params::Dry::Internal::typedefs{$p_name} = $p_definition;
+        $Params::Dry::Internal::typedefs{ $p_name } = $p_definition;
 
         return $p_name;
 
-    }
+    } #+ end of: sub typedef($$)
 
     #=-----
     #  __
@@ -186,11 +185,11 @@ package Params::Dry;
     # RETURN: first param if params like (object, %params) or undef otherwise
     sub __ {
         my $self = ( ( scalar @_ % 2 ) ? shift : undef );
-        push @Params::Dry::Internal::params_stack, {@_};
+        push @Params::Dry::Internal::params_stack, { @_ };
         $Params::Dry::Internal::current_params = $Params::Dry::Internal::params_stack[-1];
 
         return $self;
-    }
+    } #+ end of: sub __
 
     #=----------
     #  no_more
@@ -202,16 +201,15 @@ package Params::Dry;
 
         pop @Params::Dry::Internal::params_stack;
         $Params::Dry::Internal::current_params = $Params::Dry::Internal::params_stack[-1];
-    }
+    } #+ end of: sub no_more
 
-    # --- add additional names for funtions (long)
+# --- add additional names for funtions (long)
 
     *param_rq = *rq;
     *param_op = *op;
 
-
-
-0115&&0x4d;
+};
+0115 && 0x4d;
 
 # ABSTRACT: Simple Global Params Management System
 
@@ -241,7 +239,7 @@ version 1.05
 
 =item * B<no_more> - marks that all parametrs has been fetched (required only in some cases)
 
-=back 
+=back
 
 =head2 Example:
 
@@ -259,20 +257,20 @@ version 1.05
     #=------------------------------------------------------------------------( typedef definitions )
 
     # --- how to define types?  - its Easy :)
-    typedef 'name', 'String[20]';   
-  
-    typedef 'subname', 'name';  # even Easier :)  
+    typedef 'name', 'String[20]';
+
+    typedef 'subname', 'name';  # even Easier :)
 
     #=------------------------------------------------------------------------( functions )
 
 
     sub new {
-        
+
         # --- using parameters :)
-        
+
         my $self = __@_;    # inteligent __ function will return $self on '$self->new' call or undef on 'new' call
-        
-        # --- geting parameters data 
+
+        # --- geting parameters data
 
         #+ required parameter name (in 'name' (autodetected) type (see typedefs above) with no default value)
         my $p_name          = rq 'name'; # this is using default type for required parameter name without default value
@@ -282,11 +280,11 @@ version 1.05
 
         #+ optional parameter details (in build-in 'String' type  with default value '')
         my $p_details       = op 'details', 'String', ''; # unlimited string for optional parameter details
-        
-        return bless { 
+
+        return bless {
                     name        => $p_name,
                     second_name => $p_second_name,
-                    details     => $p_details, 
+                    details     => $p_details,
                 }, 'ParamsTest';
     }
 
@@ -296,18 +294,18 @@ B<More you can find in examples>
 
 =head1 DESCRIPTION
 
-=head2 Understand main concepts 
+=head2 Understand main concepts
 
 First. If you can use any function as in natural languague - you will use and understand it even after few months.
 
-Second. Your lazy life will be easy, and you will reduce a lot of errors if you will have guarancy that your parameter 
+Second. Your lazy life will be easy, and you will reduce a lot of errors if you will have guarancy that your parameter
 in whole project means the same ( ex. when you see 'client' you know that it is always String[32] ).
 
 Third. You want to set the type in one and only in one place.
 
 Yes, DRY principle in its pure form!
 
-So all your dreams you can now find in this module. 
+So all your dreams you can now find in this module.
 
 B<That's all. Easy to use. Easy to manage. Easy to understand.>
 
@@ -340,7 +338,7 @@ Common ones mean: '__', 'typedef', 'no_more', DEFAULT_TYPE
 
 =item * B<$Debug> - if set to TRUE (default: FALSE) will show more debug
 
-=back 
+=back
 
 =head1 SUBROUTINES/METHODS
 
@@ -350,15 +348,15 @@ Common ones mean: '__', 'typedef', 'no_more', DEFAULT_TYPE
 Start getting the parameters. Used on the begin of the function
 
     sub pleple {
-        my $self = __@_;    
+        my $self = __@_;
 
-RETURN: first param if was called like $obj->pleple(%params) or undef on pleple(%params) call 
+RETURN: first param if was called like $obj->pleple(%params) or undef on pleple(%params) call
 
 
 =head2 B<rq> or B<param_rq> - required parameter
 
 Check if required parameter exists, if yes check if its valid, if not, report error
-    
+
 B<rq> C<in param name> [C<in param type>, [C<default value>]]
 
     sub pleple {
@@ -378,7 +376,7 @@ RETURN: parameter value
 =head2 B<op> or B<param_op> - optional parameter
 
 Check if required parameter exists, if yes check it, if not return undef
-    
+
 B<op> C<in param name> [C<in param type>, [C<default value>]]
 
 C<see above>
@@ -389,8 +387,8 @@ RETURN: parameter value
 
 =head2 B<no_more> - marks that no more parameters will be readed
 
-It can be useful in some cases, for example whan default value of the param is the 
-function call and this function is using parameters as well. 
+It can be useful in some cases, for example whan default value of the param is the
+function call and this function is using parameters as well.
 
 The function is getting from internal stack previous parameters
 
@@ -398,7 +396,7 @@ Example.
 
     sub get_val {
         my $self = __@_;
-        
+
         my $p_name = rq 'name';
 
         no_more; # to give back old parameters
@@ -407,7 +405,7 @@ Example.
 
     sub main {
         my $self = __@_;
-        
+
         my $p_nick = rq 'nick', 'String', $self->get_val(name => 'somename');
 
     }
@@ -433,13 +431,13 @@ Also the strict parameter checking implementation is planed in next releases
 
 =item * B<Ref> - any reference, Optional parameter defines type of the reference
 
-=item * B<Scalar> - short cut of Ref[Scalar] 
+=item * B<Scalar> - short cut of Ref[Scalar]
 
-=item * B<Array> - short cut of Ref[Array] 
+=item * B<Array> - short cut of Ref[Array]
 
-=item * B<Hash> - short cut of Ref[Hash] 
+=item * B<Hash> - short cut of Ref[Hash]
 
-=item * B<Code> - short cut of Ref[Code] 
+=item * B<Code> - short cut of Ref[Code]
 
 =back
 
@@ -468,7 +466,7 @@ Example.
         my $self = __@_;
 
         my $p_super_name = rq 'super_name', 'Super::String'; # that's all folks!
-        
+
         ...
     }
 
