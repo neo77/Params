@@ -1,5 +1,7 @@
 Revision history for Params::Dry
 
+1.08 2014-03-07    
+ - kwalitee: version fix
 1.07 2014-03-07    
  - kwalitee: consistent version
  - kwalitee: LICENSE file META.yml

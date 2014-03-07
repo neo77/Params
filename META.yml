@@ -21,16 +21,16 @@ no_index:
 provides:
     Params::Dry:
         file: lib/Params/Dry.pm
-        version: 1.07
+        version: 1.08
     Params::Dry::Types:
         file: lib/Params/Dry/Types.pm
-        version: 1.07
+        version: 1.08
 requires:
   Carp: 0
   Exporter: 0
   Scalar::Util: 0
   perl: 5.01
-version: 1.07
+version: 1.08
 resources: 
     license: http://opensource.org/licenses/artistic-license-2.0.php
     repository: https://github.com/neo77/Params-Dry
