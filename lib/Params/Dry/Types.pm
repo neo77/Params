@@ -13,7 +13,7 @@ package Params::Dry::Types;
     use warnings;
 
 # --- version ---
-    our $VERSION = 1.08;
+    our $VERSION = 1.09;
 
 #=------------------------------------------------------------------------ { use, constants }
 
@@ -147,7 +147,7 @@ Params::Dry::Types - Build-in types for Params::Dry - Simple Global Params Manag
 
 =head1 VERSION
 
-version 1.08
+version 1.09
 
 =head1 EXPORT
 

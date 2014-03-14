@@ -31,7 +31,7 @@ package Params::Dry;
     use 5.10.0;
 
 # --- version ---
-    our $VERSION = 1.08;
+    our $VERSION = 1.09;
 
 #=------------------------------------------------------------------------ { use, constants }
 
@@ -52,11 +52,12 @@ package Params::Dry;
 
     use parent 'Exporter';
 
-    our @EXPORT_OK = qw(__ rq op typedef no_more DEFAULT_TYPE param_rq param_op);
+    our @EXPORT_OK = qw(_ __ rq op typedef no_more DEFAULT_TYPE param_rq param_op);
 
     our %EXPORT_TAGS = (
-                         short => [qw(__ rq op typedef no_more DEFAULT_TYPE)],
-                         long  => [qw(__ param_rq param_op typedef no_more DEFAULT_TYPE)]
+                         shorten => [qw(_ rq op tdef no_more DEFAULT_TYPE)],
+                         short   => [qw(__ rq op typedef no_more DEFAULT_TYPE)],
+                         long    => [qw(__ param_rq param_op typedef no_more DEFAULT_TYPE)]
     );
 
 #=------------------------------------------------------------------------ { module private functions }
@@ -158,12 +159,12 @@ package Params::Dry;
         return __check_parameter( $p_name, $p_type, $p_default, FALSE );
     } #+ end of: sub op($;$$)
 
-    #=---------
-    # typedef
-    #=---------
+    #=------
+    # tdef
+    #=------
     #* make relation between name and definition, which can be used to check param types
     #* RETURN: name of the type
-    sub typedef($$) {
+    sub tdef($$) {
         my ( $p_name, $p_definition ) = @_;
 
         if ( exists $Params::Dry::Internal::typedefs{ $p_name } ) {
@@ -176,20 +177,20 @@ package Params::Dry;
 
         return $p_name;
 
-    } #+ end of: sub typedef($$)
+    } #+ end of: sub tdef($$)
 
-    #=-----
-    #  __
-    #=-----
+    #=----
+    #  _
+    #=----
     #* gets the parameters to internal use
     # RETURN: first param if params like (object, %params) or undef otherwise
-    sub __ {
+    sub _ {
         my $self = ( ( scalar @_ % 2 ) ? shift : undef );
         push @Params::Dry::Internal::params_stack, { @_ };
         $Params::Dry::Internal::current_params = $Params::Dry::Internal::params_stack[-1];
 
         return $self;
-    } #+ end of: sub __
+    } #+ end of: sub _
 
     #=----------
     #  no_more
@@ -207,6 +208,8 @@ package Params::Dry;
 
     *param_rq = *rq;
     *param_op = *op;
+    *typedef  = *tdef;
+    *__       = *_;
 
 };
 0115 && 0x4d;
@@ -217,11 +220,11 @@ package Params::Dry;
 __END__
 =head1 NAME
 
-Params::Dry - Simple Global Params Management System which helps you to keep DRY rule
+Params::Dry - Simple Global Params Management System which helps you to keep DRY principle
 
 =head1 VERSION
 
-version 1.08
+version 1.09
 
 =head1 SYNOPSIS
 
@@ -229,9 +232,9 @@ version 1.08
 
 =over 4
 
-=item * B<typedef> - defines global types for variables
+=item * B<tdef/typedef> - defines global types for variables
 
-=item * B<__@_> - starts parameter fetching
+=item * B<_@_/__@_> - starts parameter fetching
 
 =item * B<rq/param_rq> - get required parameter
 
@@ -294,7 +297,7 @@ B<More you can find in examples>
 
 =head1 DESCRIPTION
 
-=head2 Understand main concepts
+=head2 Understanding the main concepts
 
 First. If you can use any function as in natural languague - you will use and understand it even after few months.
 
@@ -303,7 +306,7 @@ in whole project means the same ( ex. when you see 'client' you know that it is 
 
 Third. You want to set the type in one and only in one place.
 
-Yes, DRY principle in its pure form!
+Yes, B<DRY principle> in its pure form!
 
 So all your dreams you can now find in this module.
 
@@ -313,13 +316,13 @@ B<That's all. Easy to use. Easy to manage. Easy to understand.>
 
 =over 4
 
-=item * B<:short> - imports: 'op', 'rq' and common ones
+=item * B<:shorten> - imports: 'op', 'rq', '_', 'tdef' and 'DEFAULT_TYPE' constant
 
-=item * B<:long> - imports: 'param_op', 'param_rq' and common ones
+=item * B<:short> - imports: 'op', 'rq', '__', 'typedef', 'no_more' and 'DEFAULT_TYPE' constant
+
+=item * B<:long> - imports: 'param_op', 'param_rq', '__', 'typedef', 'no_more' and 'DEFAULT_TYPE' constant
 
 =back
-
-Common ones mean: '__', 'typedef', 'no_more', DEFAULT_TYPE
 
 
 =head1 CONSTANTS AND VARIABLES
@@ -343,7 +346,7 @@ Common ones mean: '__', 'typedef', 'no_more', DEFAULT_TYPE
 =head1 SUBROUTINES/METHODS
 
 
-=head2 B<__> - turtle operator
+=head2 B<_> or B<__> - turtle operator
 
 Start getting the parameters. Used on the begin of the function
 
@@ -412,7 +415,27 @@ Example.
 
 It is good practice to use no_more at the end of geting parameters
 Also the strict parameter checking implementation is planed in next releases
-(so using no_more you will be able to die if apear more parameters that was fetched - to avoid misspelings)
+(so using I<no_more> you will be able to die if apear more parameters that was fetched - to avoid misspelings)
+
+=head2 B<tdef> or B<typedef> - defines global types for variables
+
+You see parameter in 'customer' type, and you know, that it mean always String[40]. In whole project.
+This is a big advantage of using predefined types.
+(btw. the I<typedef> if you are not trying to redefine already existing type)
+
+Ok, your project is growing and you need to change customer type to String[60].
+Easy. One type definition, one place to be changed.
+That is how it helps you to keep B<DRY principle> in your code.
+
+B<typedef> C<type name>, C<type definition>;
+
+    # ---   name and definition  - its Easy :)
+    typedef 'name', 'String[20]';
+
+    typedef 'subname', 'name';  # can be even Easier :)
+
+
+RETURN: name of the already defined type
 
 
 =head1 BUILD IN TYPES

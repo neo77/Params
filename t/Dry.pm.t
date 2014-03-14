@@ -32,20 +32,29 @@ $tb->output( \*STDOUT );
 {
     use_ok( 'Params::Dry', ':short' );
     map { can_ok( 'Params::Dry', $_ ) } qw(
-      rq
-      op
-      typedef
-      __
-      no_more
+        rq
+        op
+        typedef
+        __
+        no_more
+    );
+
+    use_ok( 'Params::Dry', ':shorten' );
+    map { can_ok( 'Params::Dry', $_ ) } qw(
+        rq
+        op
+        tdef
+        _
+        no_more
     );
 
     use_ok( 'Params::Dry', ':long' );
     map { can_ok( 'Params::Dry', $_ ) } qw(
-      param_rq
-      param_op
-      typedef
-      __
-      no_more
+        param_rq
+        param_op
+        typedef
+        __
+        no_more
     );
 }
 
@@ -53,7 +62,7 @@ $tb->output( \*STDOUT );
 #  _error
 #=----------------------
 {
-    dies_ok( sub { _error('any') }, '_error function dies' );
+    dies_ok( sub { _error( 'any' ) }, '_error function dies' );
 }
 
 #=-----------------------
@@ -64,9 +73,9 @@ $tb->output( \*STDOUT );
     typedef( 'client_bis', 'client' );
     typedef( 'client_ss',  'client_bis' );
 
-    ok( Params::Dry::__get_effective_type('client') eq 'String[20]',     'check effective type of main type' );
-    ok( Params::Dry::__get_effective_type('client_bis') eq 'String[20]', 'check effective type of child type' );
-    ok( Params::Dry::__get_effective_type('client_ss') eq 'String[20]',  'check effective type of grand child type' );
+    ok( Params::Dry::__get_effective_type( 'client' ) eq 'String[20]',     'check effective type of main type' );
+    ok( Params::Dry::__get_effective_type( 'client_bis' ) eq 'String[20]', 'check effective type of child type' );
+    ok( Params::Dry::__get_effective_type( 'client_ss' ) eq 'String[20]',  'check effective type of grand child type' );
 
     # cleaning
     %Params::Dry::Internal::typedefs = ();
@@ -111,7 +120,7 @@ $tb->output( \*STDOUT );
     {
         no warnings 'once';
         *Params::Dry::Types::Super::String = sub {
-            Params::Dry::Types::String(@_) and $_[0] =~ /Super/;
+            Params::Dry::Types::String( @_ ) and $_[0] =~ /Super/;
         };
     }
 
