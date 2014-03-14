@@ -1,7 +1,7 @@
 Revision history for Params::Dry
 
 1.09 2014-03-14    
- - add shorten tak (_, tdef)
+ - add shorten tag (tdef)
  - extending documentation (typedef)
 1.08 2014-03-07    
  - kwalitee: version fix

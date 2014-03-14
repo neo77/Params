@@ -44,7 +44,7 @@ $tb->output( \*STDOUT );
         rq
         op
         tdef
-        _
+        __
         no_more
     );
 

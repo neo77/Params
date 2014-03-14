@@ -52,10 +52,10 @@ package Params::Dry;
 
     use parent 'Exporter';
 
-    our @EXPORT_OK = qw(_ __ rq op typedef no_more DEFAULT_TYPE param_rq param_op);
+    our @EXPORT_OK = qw(__ rq op tdef typedef no_more DEFAULT_TYPE param_rq param_op);
 
     our %EXPORT_TAGS = (
-                         shorten => [qw(_ rq op tdef no_more DEFAULT_TYPE)],
+                         shorten => [qw(__ rq op tdef no_more DEFAULT_TYPE)],
                          short   => [qw(__ rq op typedef no_more DEFAULT_TYPE)],
                          long    => [qw(__ param_rq param_op typedef no_more DEFAULT_TYPE)]
     );
@@ -179,18 +179,18 @@ package Params::Dry;
 
     } #+ end of: sub tdef($$)
 
-    #=----
-    #  _
-    #=----
+    #=-----
+    #  __
+    #=-----
     #* gets the parameters to internal use
     # RETURN: first param if params like (object, %params) or undef otherwise
-    sub _ {
+    sub __ {
         my $self = ( ( scalar @_ % 2 ) ? shift : undef );
         push @Params::Dry::Internal::params_stack, { @_ };
         $Params::Dry::Internal::current_params = $Params::Dry::Internal::params_stack[-1];
 
         return $self;
-    } #+ end of: sub _
+    } #+ end of: sub __
 
     #=----------
     #  no_more
@@ -209,7 +209,6 @@ package Params::Dry;
     *param_rq = *rq;
     *param_op = *op;
     *typedef  = *tdef;
-    *__       = *_;
 
 };
 0115 && 0x4d;
@@ -234,7 +233,7 @@ version 1.09
 
 =item * B<tdef/typedef> - defines global types for variables
 
-=item * B<_@_/__@_> - starts parameter fetching
+=item * B<__@_> - starts parameter fetching
 
 =item * B<rq/param_rq> - get required parameter
 
@@ -346,7 +345,7 @@ B<That's all. Easy to use. Easy to manage. Easy to understand.>
 =head1 SUBROUTINES/METHODS
 
 
-=head2 B<_> or B<__> - turtle operator
+=head2 B<__> - snail operator
 
 Start getting the parameters. Used on the begin of the function
 
