@@ -35,16 +35,23 @@ package Params::Dry;
 
 #=------------------------------------------------------------------------ { use, constants }
 
-    use Carp;                  # confess
-    use Params::Dry::Types;    # to mark that will reserving this namespace (build in types)
+    use Carp;    # confess
 
-    use constant DEFAULT_TYPE => 1;        # default check (for param_op)
-    use constant TRUE         => 1;        # true
-    use constant FALSE        => 0;        # and false
-    use constant OK           => TRUE;     # true
-    use constant NO           => FALSE;    # false
+    use Params::Dry::Types;              # to mark that will reserving this namespace (build in types)
+    use Params::Dry::Types;              # to mark that will reserving this namespace (build in types)
+    use Params::Dry::Types::String;      # string extended types
+    use Params::Dry::Types::Object;      # object extended types
+    use Params::Dry::Types::DateTime;    # datetime extended types
+    use Params::Dry::Types::Number;      # number extended types
+    use Params::Dry::Types::Ref;         # ref extended types
 
-    our $Debug = FALSE;                    # use Debug mode or not
+    use constant DEFAULT_TYPE => 1;      # default check (for param_op)
+    use constant TRUE         => 1;      # true
+    use constant FALSE        => 0;      # and false
+    use constant OK           => TRUE;   # true
+    use constant NO           => FALSE;  # false
+
+    our $Debug = FALSE;                  # use Debug mode or not
 
 #=------------------------------------------------------------------------ { export }
 
@@ -206,10 +213,13 @@ package Params::Dry;
 
 # --- add additional names for funtions (long)
 
-    *param_rq = *rq;
-    *param_op = *op;
-    *typedef  = *tdef;
+    {
+        no warnings 'once';
 
+        *param_rq = *rq;
+        *param_op = *op;
+        *typedef  = *tdef;
+    };
 };
 0115 && 0x4d;
 

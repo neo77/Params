@@ -87,17 +87,21 @@ package Params::Dry::Types;
         $_[0] and ref $_[0] ? FAIL : PASS;
     } #+ end of: sub Value
 
-    #+ Number - mapped types
-    *Params::Dry::Types::Int   = *Params::Dry::Types::Number::Int;
-    *Params::Dry::Types::Float = *Params::Dry::Types::Number::Float;
-    *Params::Dry::Types::Bool  = *Params::Dry::Types::Number::Bool;
+    {
+        no warnings 'once';
 
-    #+ Ref - mapped types
-    *Params::Dry::Types::Scalar = *Params::Dry::Types::Ref::Scalar;
-    *Params::Dry::Types::Array  = *Params::Dry::Types::Ref::Array;
-    *Params::Dry::Types::Hash   = *Params::Dry::Types::Ref::Hash;
-    *Params::Dry::Types::Code   = *Params::Dry::Types::Ref::Code;
-    *Params::Dry::Types::Regexp = *Params::Dry::Types::Ref::Regexp;
+        #+ Number - mapped types
+        *Params::Dry::Types::Int   = *Params::Dry::Types::Number::Int;
+        *Params::Dry::Types::Float = *Params::Dry::Types::Number::Float;
+        *Params::Dry::Types::Bool  = *Params::Dry::Types::Number::Bool;
+
+        #+ Ref - mapped types
+        *Params::Dry::Types::Scalar = *Params::Dry::Types::Ref::Scalar;
+        *Params::Dry::Types::Array  = *Params::Dry::Types::Ref::Array;
+        *Params::Dry::Types::Hash   = *Params::Dry::Types::Ref::Hash;
+        *Params::Dry::Types::Code   = *Params::Dry::Types::Ref::Code;
+        *Params::Dry::Types::Regexp = *Params::Dry::Types::Ref::Regexp;
+    };
 
 };
 0115 && 0x4d;

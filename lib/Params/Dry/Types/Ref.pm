@@ -18,7 +18,6 @@ package Params::Dry::Types::Ref;
 #=------------------------------------------------------------------------ { use, constants }
 
     use Params::Dry::Types qw(:const);
-    use Params::Dry::Types::Ref;
 
 #=------------------------------------------------------------------------ { module public functions }
 
