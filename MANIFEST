@@ -1,9 +1,17 @@
 Changes
 lib/Params/Dry.pm
 lib/Params/Dry/Types.pm
+lib/Params/Dry/Types/String.pm
+lib/Params/Dry/Types/DateTime.pm
+lib/Params/Dry/Types/Object.pm
+lib/Params/Dry/Types/Ref.pm
+lib/Params/Dry/Types/Number.pm
 Makefile.PL
 MANIFEST			This list of files
+LICENSE
 README
+META.yml
+META.json
 t/00-load.t
 t/manifest.t
 t/pod-coverage.t

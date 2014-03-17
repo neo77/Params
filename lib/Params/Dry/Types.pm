@@ -4,16 +4,17 @@
 #* Info: Types definitions module
 #* Author: Pawel Guspiel (neo77) <neo@cpan.org>
 #*
-#* This module keeps validation functions. You can of course add your modules which inherites from this and will add additional checks
+#* This module keeps validation functions. You can of course add your modules which uses this and will add additional checks
 #* Build in types for Params::Dry
 #*
 package Params::Dry::Types;
 {
     use strict;
     use warnings;
+    use utf8;
 
 # --- version ---
-    our $VERSION = 1.09;
+    our $VERSION = 1.10;
 
 #=------------------------------------------------------------------------ { use, constants }
 
@@ -44,42 +45,10 @@ package Params::Dry::Types;
         PASS;
     } #+ end of: sub String
 
-    #=------
-    #  Int
-    #=------
-    #* int type check Int[3] - no more than 999
-    #* RETURN: PASS if test pass otherwise FAIL
-    sub Int {
-        ( ref( $_[0] ) or $_[0] !~ /^[+\-]?(\d+)$/ ) and return FAIL;
-        $_[1] and $1 and length $1 > $_[1] and return FAIL;
-        PASS;
-    } #+ end of: sub Int
-
-    #=--------
-    #  Float
-    #=--------
-    #* float type check
-    #* RETURN: PASS if test pass otherwise FAIL
-    sub Float {
-        ( ref( $_[0] ) or $_[0] !~ /^[+\-]?(\d+(?:\.\d+)?)$/ ) and return FAIL;
-        $_[1] and $1 and length $1 > $_[1] and return FAIL;
-        PASS;
-    } #+ end of: sub Float
-
-    #=-------
-    #  Bool
-    #=-------
-    #* Bool type check
-    #* RETURN: PASS if test pass otherwise FAIL
-    sub Bool {
-        return PASS if !ref( $_[0] ) and ( "$_[0]" eq '0' or "$_[0]" eq 1 );
-        FAIL;
-    } #+ end of: sub Bool
-
     #=---------
     #  Object
     #=---------
-    #* Object type check, Object - just object, or Object(APos::core) check if is APos::core type
+    #* Object type check, Object - just object, or Object(Params::Dry::Types) check if is Params::Dry::Types type
     #* RETURN: PASS if test pass otherwise FAIL
     sub Object {
         my $class = blessed( $_[0] );
@@ -100,41 +69,35 @@ package Params::Dry::Types;
         PASS;
     } #+ end of: sub Ref
 
-    #=---------
-    #  Scalar
-    #=---------
-    #* scalar type check
-    #* RETURN: PASS if test pass otherwise FAIL
-    sub Scalar {
-        Ref( $_[0], 'SCALAR' );
-    } #+ end of: sub Scalar
+    #=----------
+    #  Defined
+    #=----------
+    #* Allows anything what is defined
+    #* RETURN: PASS if defined
+    sub Defined {
+        defined $_[0] ? PASS : FAIL;
+    } #+ end of: sub Defined
 
     #=--------
-    #  Array
+    #  Value
     #=--------
-    #* array type check
-    #* RETURN: PASS if test pass otherwise FAIL
-    sub Array {
-        Ref( $_[0], 'ARRAY' );
-    } #+ end of: sub Array
+    #* Allows anything what is not a reference
+    #* RETURN: PASS if defined
+    sub Value {
+        $_[0] and ref $_[0] ? FAIL : PASS;
+    } #+ end of: sub Value
 
-    #=-------
-    #  Hash
-    #=-------
-    #* array type check
-    #* RETURN: PASS if test pass otherwise FAIL
-    sub Hash {
-        Ref( $_[0], 'HASH' );
-    } #+ end of: sub Hash
+    #+ Number - mapped types
+    *Params::Dry::Types::Int   = *Params::Dry::Types::Number::Int;
+    *Params::Dry::Types::Float = *Params::Dry::Types::Number::Float;
+    *Params::Dry::Types::Bool  = *Params::Dry::Types::Number::Bool;
 
-    #=-------
-    #  Code
-    #=-------
-    #* array type check
-    #* RETURN: PASS if test pass otherwise FAIL
-    sub Code {
-        Ref( $_[0], 'CODE' );
-    } #+ end of: sub Code
+    #+ Ref - mapped types
+    *Params::Dry::Types::Scalar = *Params::Dry::Types::Ref::Scalar;
+    *Params::Dry::Types::Array  = *Params::Dry::Types::Ref::Array;
+    *Params::Dry::Types::Hash   = *Params::Dry::Types::Ref::Hash;
+    *Params::Dry::Types::Code   = *Params::Dry::Types::Ref::Code;
+    *Params::Dry::Types::Regexp = *Params::Dry::Types::Ref::Regexp;
 
 };
 0115 && 0x4d;
@@ -147,7 +110,7 @@ Params::Dry::Types - Build-in types for Params::Dry - Simple Global Params Manag
 
 =head1 VERSION
 
-version 1.09
+version 1.10
 
 =head1 EXPORT
 
@@ -163,23 +126,46 @@ version 1.09
 
 =item * B<String> - can be used with parameters (like: String[20]) which mean max 20 chars string
 
-=item * B<Int> - can be used with parameters (like: Int[3]) which mean max 3 chars int not counting signs
+=item * B<Int> - can be used with parameters (like: Int[3]) which mean max 3 chars int not counting signs, shortcut of Number::Int
 
-=item * B<Float> - number with decimal part
+=item * B<Float> - number with decimal part, shortcut of Number::Float
 
-=item * B<Bool> - boolean value (can be 0 or 1)
+=item * B<Bool> - boolean value (can be 0 or 1), shortcut of Number::Bool
 
 =item * B<Object> - check if is an object. Optional parameter extend check of exact object checking ex. Object[DBI::db]
 
+=item * B<Defined> - pass if value is defined
+
+=item * B<Value> - pass if it is not a reference
+
 =item * B<Ref> - any reference, Optional parameter defines type of the reference
 
-=item * B<Scalar> - short cut of Ref[Scalar]
+=item * B<Scalar> - shortcut of Ref[Scalar] or Ref::Scalar
 
-=item * B<Array> - short cut of Ref[Array]
+=item * B<Array> - shortcut of Ref[Array] or Ref::Array
 
-=item * B<Hash> - short cut of Ref[Hash]
+=item * B<Hash> - shortcut of Ref[Hash] or Ref::Hash
 
-=item * B<Code> - short cut of Ref[Code]
+=item * B<Code> - shortcut of Ref[Code] or Ref::Code
+
+
+=back
+
+=head1 RESERVED/USED SUBTYPES
+
+Subtypes/Namespaces which are already used/reserved
+
+=over 4
+
+=item * Params::Dry::Types - main types
+
+=item * Params::Dry::Types::Number - number types
+
+=item * Params::Dry::Types::String - string types
+
+=item * Params::Dry::Types::Ref - ref types
+
+=item * Params::Dry::Types::Object - reserved for extended object types
 
 =back
 
@@ -212,7 +198,6 @@ Example.
         ...
     }
 
-
 =head1 AUTHOR
 
 Pawel Guspiel (neo77), C<< <neo at cpan.org> >>
@@ -229,6 +214,10 @@ automatically be notified of progress on your bug as I make changes.
 You can find documentation for this module with the perldoc command.
 
     perldoc Params::Dry::Types
+    perldoc Params::Dry::Types::Number
+    perldoc Params::Dry::Types::String
+    perldoc Params::Dry::Types::Ref
+    perldoc Params::Dry::Types::Object
     perldoc Params::Dry
 
 

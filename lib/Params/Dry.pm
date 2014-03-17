@@ -31,7 +31,7 @@ package Params::Dry;
     use 5.10.0;
 
 # --- version ---
-    our $VERSION = 1.09;
+    our $VERSION = 1.10;
 
 #=------------------------------------------------------------------------ { use, constants }
 
@@ -223,7 +223,7 @@ Params::Dry - Simple Global Params Management System which helps you to keep DRY
 
 =head1 VERSION
 
-version 1.09
+version 1.10
 
 =head1 SYNOPSIS
 
@@ -443,25 +443,49 @@ RETURN: name of the already defined type
 
 =item * B<String> - can be used with parameters (like: String[20]) which mean max 20 chars string
 
-=item * B<Int> - can be used with parameters (like: Int[3]) which mean max 3 chars int not counting signs
+=item * B<Int> - can be used with parameters (like: Int[3]) which mean max 3 chars int not counting signs, shortcut of Number::Int
 
-=item * B<Float> - number with decimal part
+=item * B<Float> - number with decimal part, shortcut of Number::Float
 
-=item * B<Bool> - boolean value (can be 0 or 1)
+=item * B<Bool> - boolean value (can be 0 or 1), shortcut of Number::Bool
 
 =item * B<Object> - check if is an object. Optional parameter extend check of exact object checking ex. Object[DBI::db]
 
+=item * B<Defined> - pass if value is defined
+
+=item * B<Value> - pass if it is not a reference
+
 =item * B<Ref> - any reference, Optional parameter defines type of the reference
 
-=item * B<Scalar> - short cut of Ref[Scalar]
+=item * B<Scalar> - shortcut of Ref[Scalar] or Ref::Scalar
 
-=item * B<Array> - short cut of Ref[Array]
+=item * B<Array> - shortcut of Ref[Array] or Ref::Array
 
-=item * B<Hash> - short cut of Ref[Hash]
+=item * B<Hash> - shortcut of Ref[Hash] or Ref::Hash
 
-=item * B<Code> - short cut of Ref[Code]
+=item * B<Code> - shortcut of Ref[Code] or Ref::Code
+
 
 =back
+
+=head1 RESERVED/USED SUBTYPES
+
+Subtypes/Namespaces which are already used/reserved
+
+=over 4
+
+=item * Params::Dry::Types - main types
+
+=item * Params::Dry::Types::Number - number types
+
+=item * Params::Dry::Types::String - string types
+
+=item * Params::Dry::Types::Ref - ref types
+
+=item * Params::Dry::Types::Object - reserved for extended object types
+
+=back
+
 
 =head2 Extending internal types
 

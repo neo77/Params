@@ -1,5 +1,10 @@
 Revision history for Params::Dry
 
+1.10 2014-03-17    
+ - add Params::Dry::Types::(String, Nubmer, Object, Ref, DateTime)
+ - add Defined and Value functions
+ - extends Float to support second parameter
+ - extends Ref to support all ref types
 1.09 2014-03-14    
  - add shorten tag (tdef)
  - extending documentation (typedef)
