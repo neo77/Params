@@ -31,7 +31,7 @@ package Params::Dry;
     use 5.10.0;
 
 # --- version ---
-    our $VERSION = 1.10;
+    our $VERSION = 1.10_01;
 
 #=------------------------------------------------------------------------ { use, constants }
 
@@ -233,7 +233,7 @@ Params::Dry - Simple Global Params Management System which helps you to keep DRY
 
 =head1 VERSION
 
-version 1.10
+version 1.10.01
 
 =head1 SYNOPSIS
 
@@ -475,6 +475,7 @@ RETURN: name of the already defined type
 
 =item * B<Code> - shortcut of Ref[Code] or Ref::Code
 
+=item * B<Regexp> - shortcut of Ref[Regexp] or Ref::Regexp
 
 =back
 
