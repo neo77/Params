@@ -69,13 +69,15 @@ $tb->output( \*STDOUT );
 #  __get_effective_type
 #=-----------------------
 {
-    typedef( 'client',     'String[20]' );
-    typedef( 'client_bis', 'client' );
-    typedef( 'client_ss',  'client_bis' );
+    typedef( 'client',       'String[20]' );
+    typedef( 'client_bis',   'client' );
+    typedef( 'client_ss',    'client_bis' );
+    typedef( 'client_multi', 'client_bis|Int[5]|client_ss' );
 
-    ok( Params::Dry::__get_effective_type( 'client' ) eq 'String[20]',     'check effective type of main type' );
-    ok( Params::Dry::__get_effective_type( 'client_bis' ) eq 'String[20]', 'check effective type of child type' );
-    ok( Params::Dry::__get_effective_type( 'client_ss' ) eq 'String[20]',  'check effective type of grand child type' );
+    ok( Params::Dry::__get_effective_type( 'client' ) eq 'String[20]',              'check effective type of main type' );
+    ok( Params::Dry::__get_effective_type( 'client_bis' ) eq 'String[20]',          'check effective type of child type' );
+    ok( Params::Dry::__get_effective_type( 'client_ss' ) eq 'String[20]',           'check effective type of grand child type' );
+    ok( Params::Dry::__get_effective_type( 'client_multi' ) eq 'Int[5]|String[20]', 'check effective type of grand child type (uniquines)' );
 
     # cleaning
     %Params::Dry::Internal::typedefs = ();
@@ -100,8 +102,6 @@ $tb->output( \*STDOUT );
 
     dies_ok( sub { Params::Dry::__check_parameter( 'test', 'client_invalid', '', 0 ) }, 'not defined type' );
     dies_ok( sub { Params::Dry::__check_parameter( 'test', 'client',         '', 1 ) }, 'required but empty' );
-
-    use Data::Dumper;
 
     # --- detect type (set explicite or get it from name?)
     __( client => 'test' );
@@ -130,6 +130,18 @@ $tb->output( \*STDOUT );
     dies_ok( sub { Params::Dry::__check_parameter( 'test', 'Super::String[10]', '', 0 ) }, 'is Super but to long' );
     __( test => 'Duper A' );
     dies_ok( sub { Params::Dry::__check_parameter( 'test', 'Super::String[10]', '', 0 ) }, 'No Super (wrong value)' );
+
+    # --- check piped types (alternatives)
+    __( multitype => '5' );
+    lives_ok( sub { Params::Dry::__check_parameter( 'multitype', 'Array|Int[3]', '', 0 ) }, 'multitype (Int)' );
+    __( multitype => ['Array'] );
+    lives_ok( sub { Params::Dry::__check_parameter( 'multitype', 'Array|Int[3]', '', 0 ) }, 'multitype (Array)' );
+    __( multitype => '44444' );
+    dies_ok( sub { Params::Dry::__check_parameter( 'multitype', 'Array|Int[3]', '', 0 ) }, 'multitype (Int - out of range)' );
+    __( multitype => { 'Trax' => 1 } );
+    dies_ok( sub { Params::Dry::__check_parameter( 'multitype', 'Array|Int[3]', '', 0 ) }, 'multitype (Hash) - wrong type' );
+    __( multitype => 'Trax' );
+    dies_ok( sub { Params::Dry::__check_parameter( 'multitype', 'Array|Int[3]', '', 0 ) }, 'multitype (String) - wrong type' );
 
     # cleaning
     %Params::Dry::Internal::typedefs       = ();

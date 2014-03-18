@@ -14,7 +14,7 @@ package Params::Dry::Types;
     use utf8;
 
 # --- version ---
-    our $VERSION = 1.10_01;
+    our $VERSION = 1.20;
 
 #=------------------------------------------------------------------------ { use, constants }
 
@@ -114,7 +114,7 @@ Params::Dry::Types - Build-in types for Params::Dry - Simple Global Params Manag
 
 =head1 VERSION
 
-version 1.10.01
+version 1.20
 
 =head1 EXPORT
 

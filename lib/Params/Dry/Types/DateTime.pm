@@ -13,7 +13,7 @@ package Params::Dry::Types::DateTime;
     use utf8;
 
 # --- version ---
-    our $VERSION = 1.10_01;
+    our $VERSION = 1.20;
 
 #=------------------------------------------------------------------------ { use, constants }
 
@@ -32,7 +32,7 @@ Params::Dry::Types::DateTime - Build-in datetime types for Params::Dry - Simple 
 
 =head1 VERSION
 
-version 1.10.01
+version 1.20
 
 =head1 RESERVED
 

@@ -13,7 +13,7 @@ package Params::Dry::Types::Ref;
     use utf8;
 
 # --- version ---
-    our $VERSION = 1.10_01;
+    our $VERSION = 1.20;
 
 #=------------------------------------------------------------------------ { use, constants }
 
@@ -131,7 +131,7 @@ Params::Dry::Types::Ref - Build-in ref types for Params::Dry - Simple Global Par
 
 =head1 VERSION
 
-version 1.10.01
+version 1.20
 
 =head1 BUILD IN TYPES
 

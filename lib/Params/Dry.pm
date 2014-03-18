@@ -31,7 +31,7 @@ package Params::Dry;
     use 5.10.0;
 
 # --- version ---
-    our $VERSION = 1.10_01;
+    our $VERSION = 1.20;
 
 #=------------------------------------------------------------------------ { use, constants }
 
@@ -86,7 +86,17 @@ package Params::Dry;
     #* RETURN: final type string
     sub __get_effective_type {
         my $param_type = $Params::Dry::Internal::typedefs{ "$_[0]" };
-        $param_type ? __get_effective_type( $param_type ) : $_[0];
+
+        if ( $param_type ) {
+
+            my @effective_params_list = map { split /\s*\|\s*/, __get_effective_type( $_ ) } split /\s*\|\s*/, $param_type;
+
+            return join '|', sort keys %{ { map { $_ => 1 } @effective_params_list } };
+
+        } else {
+            return $_[0];
+        } #+ end of: else [ if ( $param_type ) ]
+
     } #+ end of: sub __get_effective_type
 
     #=--------------------
@@ -113,31 +123,43 @@ package Params::Dry;
                 if $effective_name_type ne $effective_param_type;
         } #+ end of: if ( $Params::Dry::Internal::typedefs...)
 
-        # --- get package, function and parameters
-        my ( $type_package, $type_function, $parameters ) = $effective_param_type =~ /^(?:(.+)::)?([^\[]+)(?:\[(.+?)\])?/;
-
-        my $final_type_package = ( $type_package ) ? 'Params::Dry::Types::' . $type_package : 'Params::Dry::Types';
-
-        my @type_parameters = split /\s*,\s*/, $parameters // '';
-
-        # --- set default type unless type ---
-        _error( "Type $counted_param_type ($effective_param_type) is not defined" ) unless $final_type_package->can( "$type_function" );
-
         # --- getting final parameter value ---
         my $param_value = ( $Params::Dry::Internal::current_params->{ "$p_name" } ) // $p_default // undef;
-
-        my $check_function = $final_type_package . '::' . $type_function;
 
         # --- required / optional
         if ( !defined( $param_value ) ) {
             ( $p_is_required ) ? _error( "Parameter '$p_name' is required)" ) : return;
         } #+ end of: if ( !defined( $param_value...))
 
+        my @check_functions = ();
+
+        # --- prepare all check functions names and its parameters
+        for my $effective_param_type ( split /\s*\|\s*/, $effective_param_type ) {
+
+            # --- get package, function and parameters
+            my ( $type_package, $type_function, $parameters ) = $effective_param_type =~ /^(?:(.+)::)?([^\[]+)(?:\[(.+?)\])?/;
+
+            my $final_type_package = ( $type_package ) ? 'Params::Dry::Types::' . $type_package : 'Params::Dry::Types';
+
+            my @type_parameters = split /\s*,\s*/, $parameters // '';
+
+            # --- set default type unless type ---
+            _error( "Type $counted_param_type ($effective_param_type) is not defined" ) unless $final_type_package->can( "$type_function" );
+
+            push @check_functions, { check_function => $final_type_package . '::' . $type_function, type_parameters => \@type_parameters };
+        } #+ end of: for my $effective_param_type...
+
         # --- check if is valid
-        {
-            no strict 'refs';
-            &$check_function( $param_value, @type_parameters ) or _error( "Parameter '$p_name' is not '$counted_param_type' type (effective: $effective_param_type)" );
-        }
+        my $is_valid = NO;
+        for my $check_function_hash ( @check_functions ) {
+            my $check_function = $check_function_hash->{ 'check_function' };
+            my $type_parameters = $check_function_hash->{ 'type_parameters' } || [];
+            {
+                no strict 'refs';
+                &$check_function( $param_value, @$type_parameters ) and $is_valid = TRUE;
+            }
+        } #+ end of: for my $check_function_hash...
+        _error( "Parameter '$p_name' is not '$counted_param_type' type (effective: $effective_param_type)" ) unless $is_valid;
 
         $param_value;
     } #+ end of: sub __check_parameter
@@ -233,7 +255,7 @@ Params::Dry - Simple Global Params Management System which helps you to keep DRY
 
 =head1 VERSION
 
-version 1.10.01
+version 1.20
 
 =head1 SYNOPSIS
 
@@ -272,6 +294,7 @@ version 1.10.01
     typedef 'name', 'String[20]';
 
     typedef 'subname', 'name';  # even Easier :)
+    typedef 'subname_or_id', 'name|Int[5]';  # uuuuuf.. yes it is possible :)
 
     #=------------------------------------------------------------------------( functions )
 
@@ -433,16 +456,20 @@ This is a big advantage of using predefined types.
 (btw. the I<typedef> if you are not trying to redefine already existing type)
 
 Ok, your project is growing and you need to change customer type to String[60].
+
+Oh no! You have to accept customer by name or id. So just set String[60]|Int.
+
 Easy. One type definition, one place to be changed.
 That is how it helps you to keep B<DRY principle> in your code.
 
 B<typedef> C<type name>, C<type definition>;
 
     # ---   name and definition  - its Easy :)
-    typedef 'name', 'String[20]';
+    typedef 'name', 'String[40]';
 
     typedef 'subname', 'name';  # can be even Easier :)
 
+    typedef 'subname_or_id', 'name|Int[5]';  # uuuuuf :)
 
 RETURN: name of the already defined type
 
