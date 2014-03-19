@@ -511,13 +511,6 @@ test_function(
                expected        => PASS,
 );
 test_function(
-               function_name   => 'IO',
-               function        => \&Params::Dry::Types::Ref::IO,
-               function_params => undef,
-               value           => *STDIN{ IO },
-               expected        => PASS,
-);
-test_function(
                function_name   => 'VString',
                function        => \&Params::Dry::Types::Ref::VString,
                function_params => undef,

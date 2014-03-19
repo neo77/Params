@@ -13,7 +13,7 @@ package Params::Dry::Types::Ref;
     use utf8;
 
 # --- version ---
-    our $VERSION = 1.20;
+    our $VERSION = 1.20_01;
 
 #=------------------------------------------------------------------------ { use, constants }
 
@@ -93,15 +93,6 @@ package Params::Dry::Types::Ref;
         Params::Dry::Types::Ref( $_[0], 'FORMAT' );
     } #+ end of: sub Format
 
-    #=-------
-    #  IO
-    #=-------
-    #* IO type check
-    #* RETURN: PASS if test pass otherwise FAIL
-    sub IO {
-        Params::Dry::Types::Ref( $_[0], 'IO::File' );
-    } #+ end of: sub IO
-
     #=----------
     #  VString
     #=----------
@@ -131,7 +122,7 @@ Params::Dry::Types::Ref - Build-in ref types for Params::Dry - Simple Global Par
 
 =head1 VERSION
 
-version 1.20
+version 1.20.01
 
 =head1 BUILD IN TYPES
 
@@ -154,8 +145,6 @@ All are are checked by running ref( )
 =item * B<Ref::LValue>
 
 =item * B<Ref::Format>
-
-=item * B<Ref::IO>
 
 =item * B<Ref::VString>
 

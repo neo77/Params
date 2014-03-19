@@ -48,31 +48,31 @@
    "provides" : {
       "Params::Dry" : {
          "file" : "lib/Params/Dry.pm",
-         "version" : "1.20"
+         "version" : "1.2001"
       },
       "Params::Dry::Types" : {
          "file" : "lib/Params/Dry/Types.pm",
-         "version" : "1.20"
+         "version" : "1.2001"
       },
       "Params::Dry::Types::DateTime" : {
          "file" : "lib/Params/Dry/Types/DateTime.pm",
-         "version" : "1.20"
+         "version" : "1.2001"
       },
       "Params::Dry::Types::Number" : {
          "file" : "lib/Params/Dry/Types/Number.pm",
-         "version" : "1.20"
+         "version" : "1.2001"
       },
       "Params::Dry::Types::Object" : {
          "file" : "lib/Params/Dry/Types/Object.pm",
-         "version" : "1.20"
+         "version" : "1.2001"
       },
       "Params::Dry::Types::Ref" : {
          "file" : "lib/Params/Dry/Types/Ref.pm",
-         "version" : "1.20"
+         "version" : "1.2001"
       },
       "Params::Dry::Types::String" : {
          "file" : "lib/Params/Dry/Types/String.pm",
-         "version" : "1.20"
+         "version" : "1.2001"
       }
    },
    "release_status" : "stable",
@@ -84,5 +84,5 @@
          "url" : "https://github.com/neo77/Params-Dry"
       }
    },
-   "version" : "1.20"
+   "version" : "1.2001"
 }
