@@ -14,7 +14,7 @@ package Params::Dry::Types;
     use utf8;
 
 # --- version ---
-    our $VERSION = 1.20_01;
+    our $VERSION = 1.20_02;
 
 #=------------------------------------------------------------------------ { use, constants }
 

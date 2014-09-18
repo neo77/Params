@@ -31,7 +31,7 @@ package Params::Dry;
     use 5.10.0;
 
 # --- version ---
-    our $VERSION = 1.20_01;
+    our $VERSION = 1.20_02;
 
 #=------------------------------------------------------------------------ { use, constants }
 
@@ -75,7 +75,12 @@ package Params::Dry;
     #* printing error message
     # RETURN: dies (in case of Debug is making confess)
     sub _error {
-        ( $Params::Dry::Debug ) ? confess( @_ ) : die( @_ );
+        my ( $package, $filename, $line, $subroutine, $evaltext ) = ( caller( 1 ) )[ 0 .. 3, 6 ];
+
+        my $message = ' at ' . ( $subroutine || $evaltext || 'no sub' ) . " line $line\n";
+        my $debug = "\nvim $filename +$line\n\n";
+
+        ( $Params::Dry::Debug ) ? confess( @_, $message, $debug ) : die( @_, $message );
     } #+ end of: sub _error
 
     #=-----------------------

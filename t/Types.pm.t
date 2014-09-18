@@ -117,7 +117,7 @@ test_function(
 test_function(
                function_name   => 'Object',
                function        => \&Params::Dry::Types::Object,
-               function_params => undef,
+               function_params => ['Params::Dry::Types'],
                value           => ( bless {}, 'Params::Dry::Types' ),
                expected        => PASS,
 );
