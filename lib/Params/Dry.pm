@@ -31,7 +31,7 @@ package Params::Dry;
     use 5.10.0;
 
 # --- version ---
-    our $VERSION = 1.20_02;
+    our $VERSION = 1.20_03;
 
 #=------------------------------------------------------------------------ { use, constants }
 
@@ -260,7 +260,7 @@ Params::Dry - Simple Global Params Management System which helps you to keep DRY
 
 =head1 VERSION
 
-version 1.20.01
+version 1.20.03
 
 =head1 SYNOPSIS
 
